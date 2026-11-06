@@ -60,3 +60,12 @@ node_modules/
 # Agent tooling local config (contains local tokens - never push)
 .zcode/
 android/.kotlin/
+
+# Local e2e tooling (kept private, never pushed)
+.agents/
+.mcp.json
+e2e.config.ts
+tests/
+package.json
+package-lock.json
+node_modules/
