@@ -29,6 +29,8 @@ class FoodRecipeApp extends StatelessWidget {
       title: 'Food Recipe',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       initialRoute: Routes.splashScreen,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );

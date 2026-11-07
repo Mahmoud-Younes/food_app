@@ -32,7 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         title: const Text(
           'Search',
-          style: TextStyles.font18DarkSemiBold,
+          style: TextStyles.font18BoneSemiBold,
         ),
       ),
       body: Padding(

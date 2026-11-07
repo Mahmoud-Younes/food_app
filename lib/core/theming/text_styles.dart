@@ -5,15 +5,19 @@ import 'colors.dart';
 class TextStyles {
   TextStyles._();
 
+  /// Display voice of the spice-stall world: system serif headlines
+  /// ('serif' resolves to the platform serif, Noto Serif on Android).
   static const TextStyle font32DarkBold = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,
+    fontFamily: 'serif',
     color: ColorsManager.darkText,
   );
 
   static const TextStyle font24DarkBold = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,
+    fontFamily: 'serif',
     color: ColorsManager.darkText,
   );
 
@@ -21,6 +25,14 @@ class TextStyles {
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: ColorsManager.darkText,
+  );
+
+  /// AppBar titles on the pepper bar (light) and on the night-market
+  /// ground (dark) — bone stays readable on both.
+  static const TextStyle font18BoneSemiBold = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: ColorsManager.bone,
   );
 
   static const TextStyle font16DarkSemiBold = TextStyle(
