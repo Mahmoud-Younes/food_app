@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helpers/enums.dart';
+import '../../../core/theming/colors.dart';
 import '../../../core/theming/text_styles.dart';
 import '../../../core/widgets/custom_empty_state_widget.dart';
 import '../../../core/widgets/custom_error_widget.dart';
@@ -28,11 +29,16 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDark = brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Search',
-          style: TextStyles.font18BoneSemiBold,
+          style: TextStyles.font18BoneSemiBold.copyWith(
+            fontFamily: 'serif',
+          ),
         ),
       ),
       body: Padding(
@@ -55,15 +61,22 @@ class _SearchScreenState extends State<SearchScreen> {
                     context.read<SearchCubit>().searchMeals(query),
                 decoration: InputDecoration(
                   hintText: 'Search for a meal (in English)...',
-                  prefixIcon: const Icon(
+                  hintStyle: TextStyles.font14Grey.copyWith(
+                    color: isDark
+                        ? ColorsManager.darkGroundMuted
+                        : Color.lerp(ColorsManager.cumin, ColorsManager.umber, 0.4)!,
+                  ),
+                  prefixIcon: Icon(
                     Icons.search_rounded,
-                    color: Colors.grey,
+                    color: ColorsManager.mutedInk(brightness),
                   ),
                   suffixIcon: _searchController.text.isEmpty
                       ? null
                       : IconButton(
-                          icon: const Icon(Icons.close_rounded,
-                              color: Colors.grey),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: ColorsManager.mutedInk(brightness),
+                          ),
                           onPressed: () {
                             _searchController.clear();
                             setState(() {});
@@ -104,19 +117,29 @@ class _SearchScreenState extends State<SearchScreen> {
                               'There are no recipes matching "${state.query}".',
                         );
                       }
-                      return GridView.builder(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.82,
+                      // After the quiet debounce, one 400 ms overshoot
+                      // pulse lands the new results — once per search.
+                      return TweenAnimationBuilder<double>(
+                        key: ValueKey<String>('search-results-${state.query}'),
+                        tween: Tween<double>(begin: 0.96, end: 1),
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutBack,
+                        builder: (context, scale, child) =>
+                            Transform.scale(scale: scale, child: child),
+                        child: GridView.builder(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16,
+                            crossAxisSpacing: 16,
+                            childAspectRatio: 0.82,
+                          ),
+                          itemCount: state.meals.length,
+                          itemBuilder: (context, index) {
+                            return MealCard(meal: state.meals[index]);
+                          },
                         ),
-                        itemCount: state.meals.length,
-                        itemBuilder: (context, index) {
-                          return MealCard(meal: state.meals[index]);
-                        },
                       );
                   }
                 },

@@ -16,9 +16,11 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Favorites',
-          style: TextStyles.font18BoneSemiBold,
+          style: TextStyles.font18BoneSemiBold.copyWith(
+            fontFamily: 'serif',
+          ),
         ),
       ),
       body: BlocBuilder<FavoritesCubit, FavoritesState>(

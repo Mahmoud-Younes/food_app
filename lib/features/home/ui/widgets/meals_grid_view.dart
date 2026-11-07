@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/helpers/enums.dart';
@@ -60,7 +62,8 @@ class MealsGridView extends StatelessWidget {
     }
   }
 
-  /// Simple skeleton placeholders while meals are being fetched.
+  /// Pulsing skeletons in world colors while meals are being fetched —
+  /// bone mounds that breathe until the real sacks hang in their place.
   Widget _buildLoadingGrid() {
     return GridView.builder(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
@@ -72,14 +75,87 @@ class MealsGridView extends StatelessWidget {
         childAspectRatio: 0.82,
       ),
       itemCount: 6,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-            color: ColorsManager.lightGrey,
-            borderRadius: BorderRadius.circular(16),
-          ),
-        );
-      },
+      itemBuilder: (context, index) => const _PulsingSkeleton(),
+    );
+  }
+}
+
+/// A bone skeleton card that breathes (AnimatedOpacity pulse on world
+/// colors) until the real meals arrive — no third-party shimmer.
+class _PulsingSkeleton extends StatefulWidget {
+  const _PulsingSkeleton();
+
+  @override
+  State<_PulsingSkeleton> createState() => _PulsingSkeletonState();
+}
+
+class _PulsingSkeletonState extends State<_PulsingSkeleton> {
+  bool _raised = true;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 800), (_) {
+      if (mounted) setState(() => _raised = !_raised);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDark = brightness == Brightness.dark;
+    final Color moundSurface = isDark
+        ? ColorsManager.darkGroundRaised
+        : ColorsManager.lightGrey;
+    final Color imageSurface = isDark
+        ? ColorsManager.darkGround
+        : ColorsManager.bone.withValues(alpha: 0.65);
+    final Color nameLine = isDark
+        ? ColorsManager.darkGroundMuted.withValues(alpha: 0.35)
+        : ColorsManager.cumin.withValues(alpha: 0.35);
+
+    return AnimatedOpacity(
+      opacity: _raised ? 1.0 : 0.45,
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeInOut,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: moundSurface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: imageSurface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            FractionallySizedBox(
+              widthFactor: 0.7,
+              child: Container(
+                height: 10,
+                decoration: BoxDecoration(
+                  color: nameLine,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -33,6 +33,23 @@ class ColorsManager {
   /// Muted bone for hints and secondary text on the dark ground.
   static const Color darkGroundMuted = Color(0xFFC9AE8B);
 
+  // ── Brightness-resolved inks & surfaces ──────────────────────────────
+  // Screens read these through Theme.brightness so every surface stays
+  // valid in both modes without raw color literals at call sites.
+
+  /// Primary ink for body text: umber on bone (light), bone on the
+  /// night-market ground (dark).
+  static Color ink(Brightness brightness) =>
+      brightness == Brightness.dark ? bone : umber;
+
+  /// Secondary ink: cumin on bone (light), muted bone on the dark ground.
+  static Color mutedInk(Brightness brightness) =>
+      brightness == Brightness.dark ? darkGroundMuted : cumin;
+
+  /// Raised surface above the ground (cards, chips, rows, fields).
+  static Color raisedSurface(Brightness brightness) =>
+      brightness == Brightness.dark ? darkGroundRaised : white;
+
   // ── Established names (every existing call site stays valid) ─────────
   // Values re-pigmented to the spice-stall world; names unchanged.
   static const Color primary = pepper;

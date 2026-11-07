@@ -5,8 +5,12 @@ import '../routing/routes.dart';
 import '../theming/colors.dart';
 import '../theming/text_styles.dart';
 import '../../features/home/data/models/meal_model.dart';
+import 'favorite_stamp.dart';
 
-/// Reusable meal card (Home grid, Search results, Favorites grid).
+/// Reusable meal card (Home grid, Search results, Favorites grid): a
+/// hanging sack — full-bleed image with warm corners, the name in the
+/// serif display voice, and the strArea origin tag in cumin ink when the
+/// meal carries one.
 class MealCard extends StatelessWidget {
   final MealModel meal;
 
@@ -26,13 +30,14 @@ class MealCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
     return GestureDetector(
       onTap: () => _openMealDetails(context),
       child: Card(
         clipBehavior: Clip.antiAlias,
-        color: ColorsManager.white,
-        elevation: 2,
-        shadowColor: ColorsManager.greyText.withValues(alpha: 0.3),
+        color: ColorsManager.raisedSurface(brightness),
+        elevation: 3,
+        shadowColor: ColorsManager.umber.withValues(alpha: 0.35),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -41,12 +46,40 @@ class MealCard extends StatelessWidget {
           children: [
             Expanded(child: _buildImage()),
             Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                meal.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyles.font14Grey,
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    meal.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyles.font14Grey.copyWith(
+                      fontFamily: 'serif',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      height: 1.25,
+                      color: ColorsManager.ink(brightness),
+                    ),
+                  ),
+                  // Origin tag sits under the name, never above it.
+                  // Cumin ink on bone (light); muted bone carries it on
+                  // the dark ground, where raw cumin would sink.
+                  if (meal.area.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      meal.area,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                        color: ColorsManager.mutedInk(brightness),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],
@@ -61,12 +94,12 @@ class MealCard extends StatelessWidget {
       fit: BoxFit.cover,
       width: double.infinity,
       placeholder: (context, url) => const Center(
-        child: CircularProgressIndicator(color: ColorsManager.primary),
+        child: CircularProgressIndicator(color: ColorsManager.pepper),
       ),
-      errorWidget: (context, url, error) => const Center(
+      errorWidget: (context, url, error) => Center(
         child: Icon(
           Icons.image_not_supported_outlined,
-          color: ColorsManager.greyText,
+          color: ColorsManager.mutedInk(Theme.of(context).brightness),
         ),
       ),
     );
@@ -102,15 +135,11 @@ class MealCard extends StatelessWidget {
         onTap: onRemove,
         child: Container(
           padding: const EdgeInsets.all(6),
-          decoration: const BoxDecoration(
-            color: ColorsManager.white,
+          decoration: BoxDecoration(
+            color: ColorsManager.bone.withValues(alpha: 0.92),
             shape: BoxShape.circle,
           ),
-          child: const Icon(
-            Icons.favorite_rounded,
-            size: 18,
-            color: ColorsManager.red,
-          ),
+          child: const FavoriteStamp(active: true, size: 18),
         ),
       ),
     );

@@ -4,7 +4,8 @@ import '../../../../core/theming/colors.dart';
 import '../../../../core/theming/text_styles.dart';
 import '../../../home/data/models/meal_model.dart';
 
-/// Ingredients list (strIngredient1..20 with strMeasure1..20).
+/// Ingredients list (strIngredient1..20 with strMeasure1..20) — rows
+/// pressed in one rhythm, numbered with turmeric pigment coins.
 class IngredientsSection extends StatelessWidget {
   final List<Ingredient> ingredients;
 
@@ -14,10 +15,19 @@ class IngredientsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (ingredients.isEmpty) return const SizedBox.shrink();
 
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDark = brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Ingredients', style: TextStyles.font18DarkSemiBold),
+        Text(
+          'Ingredients',
+          style: TextStyles.font18DarkSemiBold.copyWith(
+            fontFamily: 'serif',
+            color: ColorsManager.ink(brightness),
+          ),
+        ),
         const SizedBox(height: 12),
         ListView.separated(
           shrinkWrap: true,
@@ -29,7 +39,7 @@ class IngredientsSection extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: ColorsManager.lightGrey,
+                color: ColorsManager.raisedSurface(brightness),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -38,20 +48,27 @@ class IngredientsSection extends StatelessWidget {
                     width: 28,
                     height: 28,
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: ColorsManager.primaryLight,
+                    decoration: BoxDecoration(
+                      color: ColorsManager.turmeric
+                          .withValues(alpha: isDark ? 0.22 : 0.28),
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       '${index + 1}',
-                      style: TextStyles.font13Primary,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: ColorsManager.ink(brightness),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       ingredient.name,
-                      style: TextStyles.font16DarkSemiBold,
+                      style: TextStyles.font16DarkSemiBold.copyWith(
+                        color: ColorsManager.ink(brightness),
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -61,7 +78,9 @@ class IngredientsSection extends StatelessWidget {
                     child: Text(
                       ingredient.measure,
                       textAlign: TextAlign.right,
-                      style: TextStyles.font14Grey,
+                      style: TextStyles.font14Grey.copyWith(
+                        color: ColorsManager.mutedInk(brightness),
+                      ),
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theming/colors.dart';
 import '../../../../core/theming/text_styles.dart';
 
 /// Full preparation steps (strInstructions), displayed in a
@@ -11,17 +12,30 @@ class InstructionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Preparation Steps', style: TextStyles.font18DarkSemiBold),
+        Text(
+          'Preparation Steps',
+          style: TextStyles.font18DarkSemiBold.copyWith(
+            fontFamily: 'serif',
+            color: ColorsManager.ink(brightness),
+          ),
+        ),
         const SizedBox(height: 12),
-        _buildSteps(),
+        _buildSteps(context),
       ],
     );
   }
 
-  Widget _buildSteps() {
+  Widget _buildSteps(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDark = brightness == Brightness.dark;
+    // Pepper numbers in light; gold ink on the night-market ground.
+    final Color numberInk = isDark ? ColorsManager.turmeric : ColorsManager.pepper;
+
     final List<String> steps = instructions
         .split('\n')
         .map((step) => step.trim())
@@ -32,7 +46,10 @@ class InstructionsSection extends StatelessWidget {
     if (steps.length <= 1) {
       return Text(
         instructions,
-        style: TextStyles.font15Grey,
+        style: TextStyles.font15Grey.copyWith(
+          color: ColorsManager.ink(brightness),
+          height: 1.6,
+        ),
       );
     }
 
@@ -47,13 +64,18 @@ class InstructionsSection extends StatelessWidget {
           children: [
             Text(
               '${index + 1}.',
-              style: TextStyles.font16PrimarySemiBold,
+              style: TextStyles.font16PrimarySemiBold.copyWith(
+                color: numberInk,
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 steps[index],
-                style: TextStyles.font15Grey,
+                style: TextStyles.font15Grey.copyWith(
+                  color: ColorsManager.ink(brightness),
+                  height: 1.6,
+                ),
               ),
             ),
           ],

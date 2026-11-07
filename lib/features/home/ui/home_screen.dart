@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helpers/enums.dart';
+import '../../../core/theming/colors.dart';
 import '../../../core/theming/text_styles.dart';
 import '../../../core/widgets/custom_error_widget.dart';
 import '../../../core/widgets/loading_widget.dart';
@@ -33,7 +34,7 @@ class HomeScreen extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(context),
               CategoriesListView(
                 categories: state.categories,
                 selectedIndex: state.selectedCategoryIndex,
@@ -55,7 +56,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    // The serif product header: ink resolved from the ambient brightness
+    // so the first viewport stays readable on bone and on the dark ground.
+    final Brightness brightness = Theme.of(context).brightness;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Column(
@@ -63,12 +67,16 @@ class HomeScreen extends StatelessWidget {
         children: [
           Text(
             'What would you like to cook today?',
-            style: TextStyles.font24DarkBold,
+            style: TextStyles.font24DarkBold.copyWith(
+              color: ColorsManager.ink(brightness),
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             'Fresh recipes from around the world',
-            style: TextStyles.font15Grey,
+            style: TextStyles.font15Grey.copyWith(
+              color: ColorsManager.mutedInk(brightness),
+            ),
           ),
         ],
       ),

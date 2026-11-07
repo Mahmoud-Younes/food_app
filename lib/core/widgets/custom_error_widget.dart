@@ -16,22 +16,26 @@ class CustomErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline_rounded,
               size: 48,
-              color: ColorsManager.greyText,
+              color: ColorsManager.mutedInk(brightness),
             ),
             const SizedBox(height: 12),
             Text(
               errorMessage,
               textAlign: TextAlign.center,
-              style: TextStyles.font14Grey,
+              style: TextStyles.font14Grey.copyWith(
+                color: ColorsManager.ink(brightness),
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(

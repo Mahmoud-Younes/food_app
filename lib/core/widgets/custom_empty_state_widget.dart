@@ -18,25 +18,32 @@ class CustomEmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 56, color: ColorsManager.greyText),
+            Icon(icon, size: 56, color: ColorsManager.mutedInk(brightness)),
             const SizedBox(height: 16),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyles.font18DarkSemiBold,
+              style: TextStyles.font18DarkSemiBold.copyWith(
+                fontFamily: 'serif',
+                color: ColorsManager.ink(brightness),
+              ),
             ),
             if (subtitle != null) ...[
               const SizedBox(height: 8),
               Text(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: TextStyles.font14Grey,
+                style: TextStyles.font14Grey.copyWith(
+                  color: ColorsManager.mutedInk(brightness),
+                  height: 1.4,
+                ),
               ),
             ],
           ],
