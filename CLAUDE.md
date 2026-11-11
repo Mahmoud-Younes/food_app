@@ -1,6 +1,6 @@
 # food_app
 
-A Flutter food ordering application.
+A Flutter recipe browser application.
 
 ## Agent skills
 

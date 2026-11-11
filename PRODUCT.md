@@ -40,7 +40,7 @@ Required screens:
 
 Confirmed scope decisions (2026-11-06):
 
-- Splash + Onboarding screens from the Figma kit are implemented before Home (user decision).
+- The Splash screen is implemented before Home; the Figma kit's Onboarding screens are not part of the built app (only Splash exists under `lib/features/`).
 - Bonus features in scope: Hero animation on meal images and debounced search (user decision).
 
 Constraints:
@@ -51,7 +51,7 @@ Constraints:
 
 ## Brand Commitments
 
-- Reference design: the Figma "Food Recipe App UI Kit (Community)" (link above) is reference material for comparison and derivation, **not a binding contract** (user decision 2026-11-06). A custom visual world may be created; whichever world is chosen gets recorded in DESIGN.md and applied consistently across every screen.
+- Reference design: the Figma "Food Recipe App UI Kit (Community)" (link above) is reference material for comparison and derivation, **not a binding contract** (user decision 2026-11-06). A custom visual world was created in round 2 — The Spice Stall — recorded in `lib/core/theming/` (the tested design record: `colors.dart`, `category_colors.dart`, typography) and applied consistently across every screen.
 - App name: food_app (working title from the repo).
 
 ## Evidence on Hand
@@ -63,7 +63,7 @@ Constraints:
 
 ## Product Principles
 
-1. **One visual system** — a single recorded design system (DESIGN.md) governs every screen; the Figma kit is comparison material, not the contract (user decision 2026-11-06).
+1. **One visual system** — a single recorded design system (`lib/core/theming/`: `colors.dart`, `category_colors.dart`, typography) governs every screen; the Figma kit is comparison material, not the contract (user decision 2026-11-06).
 2. **State discipline** — every async surface has explicit loading, success, and error states driven by Cubit/Bloc; the UI never calls the API directly.
 3. **Null safety everywhere** — models parse defensively; `meals: null` is handled as a designed empty state.
 4. **Clean separation** — `models` / `views` / `widgets` / `controllers`(cubits) folders; small reusable widgets.
