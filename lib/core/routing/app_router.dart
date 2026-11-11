@@ -15,12 +15,20 @@ class AppRouter {
       case Routes.mainScreen:
         return _buildRoute(settings: settings, screen: const MainScreen());
       case Routes.mealDetailsScreen:
-        // The meal ID is passed as the route argument.
-        final String mealId = settings.arguments as String;
-        return _buildRoute(
-          settings: settings,
-          screen: MealDetailsScreen(mealId: mealId),
-        );
+        // The meal id and its header image travel together as a record
+        // argument; anything else takes the same fallback as the default
+        // branch below (no switch fallthrough in Dart, so it is duplicated).
+        final Object? argument = settings.arguments;
+        if (argument is MealDetailsArgs) {
+          return _buildRoute(
+            settings: settings,
+            screen: MealDetailsScreen(
+              mealId: argument.mealId,
+              imageUrl: argument.imageUrl,
+            ),
+          );
+        }
+        return _buildRoute(settings: settings, screen: const SplashScreen());
       default:
         return _buildRoute(settings: settings, screen: const SplashScreen());
     }

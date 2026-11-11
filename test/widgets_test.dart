@@ -1,7 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:food_app/core/di/service_locator.dart';
+import 'package:food_app/core/routing/app_router.dart';
 import 'package:food_app/core/routing/routes.dart';
 import 'package:food_app/core/theming/app_theme.dart';
 import 'package:food_app/core/theming/category_colors.dart';
@@ -11,6 +16,7 @@ import 'package:food_app/core/widgets/meal_card.dart';
 import 'package:food_app/features/home/data/models/category_model.dart';
 import 'package:food_app/features/home/data/models/meal_model.dart';
 import 'package:food_app/features/home/ui/widgets/categories_list_view.dart';
+import 'package:food_app/features/meal_details/ui/meal_details_screen.dart';
 
 void main() {
   // TheMealDB has no network in widget tests, so CachedNetworkImage ends on
@@ -83,9 +89,8 @@ void main() {
       expect(find.byType(Hero), findsNothing);
     });
 
-    testWidgets('pushes the meal details route with the meal id on tap', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('pushes the meal details route with the meal id and image '
+        'on tap', (WidgetTester tester) async {
       String? pushedRouteName;
       Object? pushedArguments;
       await tester.pumpWidget(
@@ -110,7 +115,80 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
 
       expect(pushedRouteName, Routes.mealDetailsScreen);
-      expect(pushedArguments, meal.id);
+      // Records compare structurally, so the pushed argument record is
+      // pinned exactly as the router destructures it (app_router.dart).
+      expect(pushedArguments, (mealId: meal.id, imageUrl: meal.image));
+    });
+  });
+
+  group('Meal details push Hero', () {
+    const MealModel testMeal = MealModel(
+      id: '52771',
+      name: 'Beef and Mustard Pie',
+      image: 'https://www.themealdb.com/images/media/meals/sytuqu1511553755.jpg',
+      area: 'British',
+    );
+
+    // The details screen fetches through service_locator's global Dio; the
+    // fast-failing adapter makes the frame-1 fetch fail immediately — no
+    // real network, no pending timeout timers, no SharedPreferences mocking
+    // (favorites load in main.dart, which this harness bypasses).
+    late HttpClientAdapter originalAdapter;
+
+    setUp(() {
+      originalAdapter = dio.httpClientAdapter;
+      dio.httpClientAdapter = _FailingMealAdapter();
+    });
+
+    tearDown(() {
+      dio.httpClientAdapter = originalAdapter;
+    });
+
+    testWidgets('frame 1 of the pushed details route already carries the '
+        'destination Hero', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          onGenerateRoute: AppRouter.onGenerateRoute,
+          home: const Scaffold(
+            body: SizedBox(
+              width: 240,
+              height: 340,
+              child: MealCard(meal: testMeal, heroTag: 'meal-52771'),
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+
+      await tester.tap(find.byType(MealCard));
+      // Exactly one pump: the cubit emits loading synchronously before its
+      // first await, so frame 1 of the pushed route is the loading branch —
+      // the frame the HeroController samples for destination heroes.
+      // pumpAndSettle would run past the fetch failure into the error branch.
+      await tester.pump();
+
+      // Scoped finder: the source card's Hero coexists during the transition.
+      // skipOffstage is false on every part of the finder because the Hero
+      // controller builds the pushed route's first frame offstage on purpose
+      // (heroes.dart:967 — the to-route stays offstage until the destination
+      // heroes are measured), and default finders skip exactly that frame-1
+      // subtree.
+      final Hero hero = tester.widget<Hero>(
+        find.descendant(
+          of: find.byType(MealDetailsScreen, skipOffstage: false),
+          matching: find.byType(Hero, skipOffstage: false),
+          skipOffstage: false,
+        ),
+      );
+      expect(hero.tag, 'meal-52771');
+
+      // Drain dio's fetch kick-off timer: dio starts every fetch through
+      // Future(...) (dio_mixin.dart:529), which schedules a zero-duration
+      // timer. Frame 1 is asserted before that timer runs; this flush pump
+      // lets it fire, landing the already-failed fetch in the error branch,
+      // so no timer outlives the test.
+      await tester.pump(const Duration(seconds: 1));
     });
   });
 
@@ -337,4 +415,26 @@ void main() {
       );
     });
   });
+}
+
+/// ---------------------------------------------------------------------------
+/// Failing Dio adapter: every fetch throws immediately, so the details fetch
+/// on frame 1 fails without any network or pending timeout timers (precedent:
+/// _FakeMealAdapter in logic_test.dart).
+/// ---------------------------------------------------------------------------
+class _FailingMealAdapter implements HttpClientAdapter {
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    throw DioException.connectionError(
+      requestOptions: options,
+      reason: 'no network in widget tests',
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
 }

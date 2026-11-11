@@ -146,10 +146,12 @@ class MealCard extends StatelessWidget {
   }
 
   void _openMealDetails(BuildContext context) {
+    // The image URL rides along so the details header can mount its
+    // destination Hero on frame 1, before the fetch answers.
     Navigator.pushNamed(
       context,
       Routes.mealDetailsScreen,
-      arguments: meal.id,
+      arguments: (mealId: meal.id, imageUrl: meal.image),
     );
   }
 }

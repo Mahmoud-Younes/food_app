@@ -22,7 +22,16 @@ import 'widgets/instructions_section.dart';
 class MealDetailsScreen extends StatelessWidget {
   final String mealId;
 
-  const MealDetailsScreen({super.key, required this.mealId});
+  /// The meal image from the route argument: the header Hero shows it on
+  /// frame 1 (before the fetch answers) while the meal itself is still
+  /// fetched fresh from the API by id.
+  final String imageUrl;
+
+  const MealDetailsScreen({
+    super.key,
+    required this.mealId,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +44,7 @@ class MealDetailsScreen extends StatelessWidget {
           builder: (context, state) {
             if (state.status == RequestStatus.loading ||
                 state.status == RequestStatus.initial) {
-              return const LoadingWidget();
+              return _buildLoadingSkeleton(context);
             }
 
             if (state.status == RequestStatus.error) {
@@ -54,6 +63,33 @@ class MealDetailsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  /// Frame-1 skeleton mirroring the success chrome: the same pinned app bar
+  /// and shared header render before the fetch answers, so the push-direction
+  /// Hero flight finds a destination on the first frame and the Hero element
+  /// stays stable across the loading -> success rebuild.
+  Widget _buildLoadingSkeleton(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          expandedHeight: 280,
+          pinned: true,
+          leading: _buildCircleButton(
+            context: context,
+            icon: Icons.arrow_back_rounded,
+            onTap: () => Navigator.pop(context),
+          ),
+          // The favorite action needs the fetched meal, so the skeleton
+          // ships without it.
+          actions: const [],
+          flexibleSpace: FlexibleSpaceBar(
+            background: _MealHeaderHero(mealId: mealId, imageUrl: imageUrl),
+          ),
+        ),
+        const SliverFillRemaining(child: LoadingWidget()),
+      ],
     );
   }
 
@@ -76,41 +112,7 @@ class MealDetailsScreen extends StatelessWidget {
             ),
           ],
           flexibleSpace: FlexibleSpaceBar(
-            background: Hero(
-              tag: 'meal-${meal.id}',
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: meal.image,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        const Center(child: LoadingWidget()),
-                    errorWidget: (context, url, error) => Center(
-                      child: Icon(
-                        Icons.image_not_supported_outlined,
-                        color: ColorsManager.mutedInk(brightness),
-                      ),
-                    ),
-                  ),
-                  // The photo melts into the ground instead of ending in
-                  // a seam — cream in light, night-market ground in dark.
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: const [0.72, 1.0],
-                        colors: <Color>[
-                          Colors.transparent,
-                          Theme.of(context).scaffoldBackgroundColor,
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            background: _MealHeaderHero(mealId: mealId, imageUrl: imageUrl),
           ),
         ),
         SliverToBoxAdapter(
@@ -275,6 +277,57 @@ class MealDetailsScreen extends StatelessWidget {
   void _showErrorSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Could not open the video.')),
+    );
+  }
+}
+
+/// The collapsible header shared by the loading skeleton and the success
+/// branch: the meal photo inside the destination [Hero], melting into the
+/// scaffold ground. The tag comes from the route argument, so frame 1 of the
+/// pushed route already carries the tag the card's Hero flies to.
+class _MealHeaderHero extends StatelessWidget {
+  final String mealId;
+  final String imageUrl;
+
+  const _MealHeaderHero({required this.mealId, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final Brightness brightness = Theme.of(context).brightness;
+    return Hero(
+      tag: 'meal-$mealId',
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CachedNetworkImage(
+            imageUrl: imageUrl,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+                const Center(child: LoadingWidget()),
+            errorWidget: (context, url, error) => Center(
+              child: Icon(
+                Icons.image_not_supported_outlined,
+                color: ColorsManager.mutedInk(brightness),
+              ),
+            ),
+          ),
+          // The photo melts into the ground instead of ending in
+          // a seam — cream in light, night-market ground in dark.
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0.72, 1.0],
+                colors: <Color>[
+                  Colors.transparent,
+                  Theme.of(context).scaffoldBackgroundColor,
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
