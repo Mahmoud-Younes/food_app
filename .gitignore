@@ -56,6 +56,7 @@ node_modules/
 .e2e/summary.md
 .e2e/logs/
 .e2e/videos/
+.e2e/
 
 # Agent tooling local config (contains local tokens - never push)
 .zcode/
@@ -69,3 +70,13 @@ tests/
 package.json
 package-lock.json
 node_modules/
+
+# Impeccable agent-tooling state (local only, never tracked)
+.impeccable/
+
+# Round-3 working artifacts (kept private, never pushed)
+/design_draft.md
+/food_app.md
+/concepts_brief.md
+/*_report.md
+docs/designs/review-archive/
