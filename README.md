@@ -50,8 +50,8 @@ Exactly the five exam-allowed packages:
 - **Debounced search** — the network call fires 500 ms after typing stops,
   not on every keystroke (`SearchCubit`).
 - **Hero image transition** — the meal photo flies between the grid card and
-  the details header when navigating back from the details screen; the closing
-  round extends the flight to the push direction as well.
+  the details header in both navigation directions: into the header when a
+  meal is opened, and back to the card when navigating back.
 - **Per-category pigments** — every category carries its own fixed accent
   color (`CategoryColors`), lifted for dark-mode contrast.
 
