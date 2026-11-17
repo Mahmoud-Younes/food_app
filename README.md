@@ -15,10 +15,10 @@ app restarts.
 
 | Screen | What it does | Screenshot |
 |---|---|---|
-| **Home** | Horizontal categories strip (`ListView.builder`) with a selected-state pigment + two-column meals grid (`GridView.builder`), with loading and error states | [02-home](docs/second_round/02-home.png) · [03-category-beef](docs/second_round/03-category-beef.png) |
+| **Home** | Horizontal categories strip (`ListView.builder`) with a selected-state pigment + two-column meals grid (`GridView.builder`), with loading and error states | [02-home](docs/second_round/02-home.png) · [03-category-beef](docs/second_round/03-category-beef.png) · [07-category-dessert](docs/second_round/07-category-dessert.png) |
 | **Meal Details** | Collapsible hero image header, meal name with origin (`strArea`) and category chips, ingredients with measures, preparation steps, YouTube button (`url_launcher`), favorite heart | [04-meal-details](docs/second_round/04-meal-details.png) |
 | **Search** | English meal-name search hitting `search.php?s=` with a 500 ms debounce and a designed empty state ("No meals found") | [05-search-results](docs/second_round/05-search-results.png) · [06-search-empty](docs/second_round/06-search-empty.png) |
-| **Favorites** | Saved meals stored locally with `shared_preferences`, persisting after app close/restart, removable per card | [12-favorites-dark](docs/second_round/12-favorites-dark.png) |
+| **Favorites** | Saved meals stored locally with `shared_preferences`, persisting after app close/restart, removable per card | [08-favorites](docs/second_round/08-favorites.png) · [12-favorites-dark](docs/second_round/12-favorites-dark.png) |
 
 A Splash screen opens the app, and a bottom navigation bar (`IndexedStack`)
 links Home, Search, and Favorites. Dark mode follows the system setting
@@ -54,6 +54,8 @@ Exactly the five exam-allowed packages:
 - **Hero image transition** — the meal photo flies between the grid card and
   the details header in both navigation directions: into the header when a
   meal is opened, and back to the card when navigating back.
+
+  ![Hero flight — the meal photo flies from the Home card into the details header, present on frame 1 while the data loads underneath](docs/second_round/hero-flight.gif)
 - **Per-category pigments** — every category carries its own fixed accent
   color (`CategoryColors`), lifted for dark-mode contrast.
 
@@ -94,6 +96,7 @@ Light:
 | ![Launch](docs/second_round/01-launch.png) | ![Home](docs/second_round/02-home.png) |
 | ![Category](docs/second_round/03-category-beef.png) | ![Details](docs/second_round/04-meal-details.png) |
 | ![Search results](docs/second_round/05-search-results.png) | ![Search empty](docs/second_round/06-search-empty.png) |
+| ![Dessert category](docs/second_round/07-category-dessert.png) | ![Favorites](docs/second_round/08-favorites.png) |
 
 Dark:
 
