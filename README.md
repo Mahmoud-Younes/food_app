@@ -1,5 +1,7 @@
 # The Spice Stall — a recipe browser on TheMealDB
 
+![Flutter](https://img.shields.io/badge/Flutter-3.47.5%20stable-B33A25?logo=flutter&logoColor=white) ![Unit and widget tests](https://img.shields.io/badge/unit_%2B_widget_tests-50_passing-2EA043) ![End-to-end tests](https://img.shields.io/badge/end%E2%80%91to%E2%80%91end_on_emulator-7%2F7_passing-2EA043) ![Data](https://img.shields.io/badge/data-TheMealDB_API-E0A526)
+
 Built with Flutter for the DEPI (Digital Egypt Pioneers Initiative) practical
 assessment. Browse meal categories from the free, open
 [TheMealDB](https://www.themealdb.com/api.php) API, open full recipe details
@@ -55,11 +57,29 @@ Exactly the five exam-allowed packages:
 - **Per-category pigments** — every category carries its own fixed accent
   color (`CategoryColors`), lifted for dark-mode contrast.
 
+## Testing
+
+The gate chain `flutter analyze` → `flutter test` → `flutter build apk --debug`
+→ end-to-end run is green on this exact tree.
+
+- **50 unit and widget tests** (`flutter test`): model `fromJson` null-safety,
+  Cubit state flows over a fake Dio HTTP adapter, the 500 ms search debounce,
+  favorites persistence with mocked `SharedPreferences`, the Spice-Stall theme
+  tokens, and a frame-1 Hero contract test that fails if the details route
+  ever loses its destination `Hero`.
+- **7 end-to-end UI tests** driven against a live Android emulator: they pin
+  the visible strings (`Beef`, `Dessert`, `Ingredients`, `Preparation Steps`,
+  `Watch Recipe Video`, `No meals found`) and the semantics ids (`nav-home`,
+  `nav-search`, `nav-favorites`, `search-field`, `favorite-toggle`,
+  `remove-favorite`). The harness itself is dev-machine tooling and stays out
+  of the repo.
+
 ## Run it
 
 ```bash
 flutter pub get
 flutter run                      # with an Android emulator/device attached
+flutter test                     # 50 unit and widget tests
 flutter build apk --debug        # debug APK
 ```
 
