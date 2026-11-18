@@ -2,7 +2,7 @@
 
 > **الحالة:** ✅ مكتملة — التاريخ: 7 نوفمبر 2026
 >
-> تطبيق وصفات الطعام (Food Recipe App) لمذاكرة DEPI العملية، مبني على واجهة [TheMealDB](https://www.themealdb.com/api.php) بحزم الامتحان المسموح بها فقط، وببنية نظيفة تحاكي مشروع `doc_doc` المرجعي.
+> تطبيق وصفات الطعام (Food Recipe App) لمذاكرة DEPI العملية، مبني على واجهة [TheMealDB](https://www.themealdb.com/api.php) بحزم الامتحان المسموح بها فقط، وببنية نظيفة (Clean Architecture).
 
 ---
 
@@ -24,7 +24,7 @@
 - **Hero animation** لانتقال صورة الوجبة من البطاقة إلى شاشة التفاصيل (`meal_card.dart` ↔ `meal_details_screen.dart`).
 - **Debounce** في `SearchCubit` بمقدار 500ms لتقليل نداءات الشبكة أثناء الكتابة.
 
-### البنية (Clean Architecture — بنمط doc_doc)
+### البنية (Clean Architecture)
 
 ```
 lib/
@@ -35,7 +35,7 @@ lib/
     └── ui/          Screens + Widgets
 ```
 
-الحزم: `dio` · `flutter_bloc` · `cached_network_image` · `shared_preferences` · `url_launcher` — فقط (بدون `get_it`/`freezed`/`retrofit`)، راجع [ADR-0001](../adr/0001-exam-allowed-packages-with-doc-doc-structure.md).
+الحزم: `dio` · `flutter_bloc` · `cached_network_image` · `shared_preferences` · `url_launcher` — فقط (بدون `get_it`/`freezed`/`retrofit`)، راجع [ADR-0001](../adr/0001-exam-allowed-packages-and-clean-architecture.md).
 
 ---
 

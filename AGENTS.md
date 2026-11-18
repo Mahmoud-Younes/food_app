@@ -24,7 +24,7 @@ node node_modules/e2e/dist/cli/bin.js run tests/food_app.e2e.ts
 
 ## Architecture
 
-doc_doc-style clean layout — mirror it exactly for new code:
+Clean-architecture layout — mirror it exactly for new code:
 
 - `lib/core/` — shared infrastructure: `di/` (service_locator), `networking/` (dio_factory, api_service, api_error_handler, api_constants), `routing/`, `theming/`, `helpers/`, `widgets/` (shared widgets like MealCard).
 - `lib/features/<feature>/{data,logic,ui}` — features: `splash`, `home`, `search`, `meal_details`, `favorites`, `main_screen`.

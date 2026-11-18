@@ -9,7 +9,9 @@ assessment. Browse meal categories from the free, open
 meals by English name, and keep a personal favorites list that persists across
 app restarts.
 
-![Home — categories strip and meals grid](docs/second_round/02-home.png)
+| ![Home — categories strip and meals grid](docs/second_round/02-home.png) | ![Meal details — ingredients, steps, YouTube button](docs/second_round/04-meal-details.png) | ![Hero flight — the meal photo flies into the header](docs/second_round/hero-flight.gif) |
+|---|---|---|
+| Home: categories + meals grid | Recipe details: ingredients, steps, video | The meal photo flies into the header |
 
 ## Screens
 
@@ -26,8 +28,8 @@ links Home, Search, and Favorites. Dark mode follows the system setting
 
 ## Architecture
 
-Clean architecture with a `doc_doc`-style layout — business logic separated
-from UI, state management via **Cubits only** (`flutter_bloc`):
+Clean architecture with a strict separation between data, business logic, and
+UI — state management via **Cubits only** (`flutter_bloc`):
 
 ```
 lib/
